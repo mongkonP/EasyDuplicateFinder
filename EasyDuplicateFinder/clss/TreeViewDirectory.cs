@@ -28,7 +28,20 @@ namespace EasyDuplicateFinder
         {
             Tv_ImgList = new ImageList();
             Tv_ImgList.ImageSize = new Size(20, 20);
+
+            this.Tv_ImgList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.Tv_ImgList.TransparentColor = System.Drawing.Color.Transparent;
+
+            this.ImageList = Tv_ImgList;
             AddSpecialAndStandardFolderImages();
+            
+
+
+        }
+        ImageList Tv_ImgList;
+        public void InitializeTreeViewDirectory()
+        {
+            
 
             AddSpecialFolderRootNode(SpecialNodeFolders.Desktop);
             AddSpecialFolderRootNode(SpecialNodeFolders.MyDocuments);
@@ -38,11 +51,7 @@ namespace EasyDuplicateFinder
             this.AfterCollapse += new TreeViewEventHandler(TV_Explorer_AfterCollapse);
 
             this.AfterSelect += new TreeViewEventHandler(TV_Explorer_AfterSelect);
-
-    
-
         }
-        ImageList Tv_ImgList;
         /* public void SetDirectory(string dir)
          {
 

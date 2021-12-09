@@ -63,6 +63,46 @@ namespace EasyDuplicateFinder.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _118917_edit_clear_icon {
+            get {
+                object obj = ResourceManager.GetObject("118917_edit_clear_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _48767_add_folder_icon {
+            get {
+                object obj = ResourceManager.GetObject("48767_add_folder_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _48768_delete_folder_icon {
+            get {
+                object obj = ResourceManager.GetObject("48768_delete_folder_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _48770_folder_search_icon {
+            get {
+                object obj = ResourceManager.GetObject("48770_folder_search_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Document_Text {
             get {
                 object obj = ResourceManager.GetObject("Document_Text", resourceCulture);
