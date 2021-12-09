@@ -19,7 +19,7 @@ namespace EasyDuplicateFinder
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            treeViewDirectory1.SetDirectory(Environment.CurrentDirectory);
+           // treeViewDirectory1.SetDirectory(Environment.CurrentDirectory);
         }
     }
 }
