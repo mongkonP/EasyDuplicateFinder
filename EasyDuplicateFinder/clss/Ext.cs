@@ -13,7 +13,7 @@ namespace EasyDuplicateFinder
 
 
         //https://stackoverflow.com/questions/10520048/calculate-md5-checksum-for-a-file
-        static string CalculateMD5(string filename)
+      public  static string CalculateMD5(string filename)
         {
             using (var md5 = MD5.Create())
             {
