@@ -48,6 +48,7 @@ namespace EasyDuplicateFinder
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.myProgressBar1 = new EasyDuplicateFinder.clss.MyProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -85,18 +86,21 @@ namespace EasyDuplicateFinder
             // 
             // listView1
             // 
+            this.listView1.AllowDrop = true;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.clPath});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(837, 3);
+            this.listView1.Location = new System.Drawing.Point(775, 3);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(594, 547);
+            this.listView1.Size = new System.Drawing.Size(656, 547);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.Click += new System.EventHandler(this.listView1_Click);
+            this.listView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
+            this.listView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
             // 
             // clPath
             // 
@@ -109,7 +113,7 @@ namespace EasyDuplicateFinder
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(704, 3);
+            this.panel1.Location = new System.Drawing.Point(642, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(133, 547);
             this.panel1.TabIndex = 1;
@@ -159,13 +163,15 @@ namespace EasyDuplicateFinder
             // treeViewDirectory1
             // 
             this.treeViewDirectory1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.treeViewDirectory1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.treeViewDirectory1.ImageIndex = 0;
             this.treeViewDirectory1.Location = new System.Drawing.Point(3, 3);
             this.treeViewDirectory1.Name = "treeViewDirectory1";
             this.treeViewDirectory1.SelectedImageIndex = 0;
-            this.treeViewDirectory1.Size = new System.Drawing.Size(701, 547);
-            this.treeViewDirectory1.TabIndex = 0;
+            this.treeViewDirectory1.Size = new System.Drawing.Size(639, 547);
+            this.treeViewDirectory1.TabIndex = 3;
+            this.treeViewDirectory1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewDirectory1_NodeMouseClick);
+            this.treeViewDirectory1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.treeViewDirectory1_MouseClick);
+            this.treeViewDirectory1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeViewDirectory1_MouseDown);
             // 
             // tabPage2
             // 
@@ -234,6 +240,7 @@ namespace EasyDuplicateFinder
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.myProgressBar1);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.button5);
             this.panel3.Controls.Add(this.button4);
@@ -242,6 +249,14 @@ namespace EasyDuplicateFinder
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1428, 120);
             this.panel3.TabIndex = 1;
+            // 
+            // myProgressBar1
+            // 
+            this.myProgressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.myProgressBar1.Location = new System.Drawing.Point(242, 75);
+            this.myProgressBar1.Name = "myProgressBar1";
+            this.myProgressBar1.Size = new System.Drawing.Size(1186, 45);
+            this.myProgressBar1.TabIndex = 4;
             // 
             // label1
             // 
@@ -290,7 +305,7 @@ namespace EasyDuplicateFinder
             this.ClientSize = new System.Drawing.Size(1442, 581);
             this.Controls.Add(this.tabControl1);
             this.Name = "frmMain";
-            this.Text = "frmMain";
+            this.Text = "Duplicate Finder by TOR";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
@@ -308,7 +323,7 @@ namespace EasyDuplicateFinder
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private TreeViewDirectory treeViewDirectory1;
+
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
@@ -326,5 +341,8 @@ namespace EasyDuplicateFinder
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+
+        private TreeViewDirectory treeViewDirectory1;
+        private clss.MyProgressBar myProgressBar1;
     }
 }
