@@ -149,42 +149,40 @@ namespace EasyDuplicateFinder
                     // Create a TaskFactory and pass it our custom scheduler.
                     TaskFactory factory = new TaskFactory(lcts);
                     CancellationTokenSource cts = new CancellationTokenSource();
-                    List<string> fols = new List<string>();
+                    List<string> files = new List<string>();
+                    label1.Invoke(new Action(() => label1.Text = "Adding:Files" ));
                     dirs.ForEach(dir =>
                     {
-                        tasks.Add(Task.Factory.StartNew(() => {fols.AddRange(Directory.GetDirectories(dir,"*",SearchOption.AllDirectories));}));
+                        tasks.Add(Task.Factory.StartNew(() => { files.AddRange(Directory.GetFiles(dir,"*",SearchOption.AllDirectories));}));
                     });
 
                     Task.WaitAll(tasks.ToArray());
 
                     cts.Dispose();
-                    if (fols.Count > 0)
+                    if (files.Count > 0)
                     {
 
-                        myProgressBar1.Invoke(new Action(() => { myProgressBar1.Maximum = fols.Count; myProgressBar1.Value = 0; }));
+                        myProgressBar1.Invoke(new Action(() => { myProgressBar1.Maximum = files.Count; myProgressBar1.Value = 0; }));
                         tasks = new List<Task>();
                         lcts = new LimitedConcurrencyLevelTaskScheduler(5);
                         // Create a TaskFactory and pass it our custom scheduler.
                       factory = new TaskFactory(lcts);
                          cts = new CancellationTokenSource();
-                        fols.ForEach(dir =>
+                        files.ForEach(f =>
                         {
                            
                               tasks.Add(Task.Factory.StartNew(() => {
 
-                                  if (Directory.Exists(dir))
-                                  {
-                                      foreach (var f in Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly))
-                                      {
                                           System.Threading.Thread.Sleep(200);
                                           dataGridView1.Invoke(new Action(() =>
                                           {
                                               dataGridView1.Rows.Add(false, Path.GetFileName(f), f, new FileInfo(f).Length, File.GetLastWriteTime(f), Ext.CalculateMD5(f));
                                           }));
                                           label1.Invoke(new Action(() => label1.Text = "Adding:" + f));
-                                      }
+                                 
                                       myProgressBar1.Invoke(new Action(() => {  myProgressBar1.Value ++; }));
-                                  }
+                                 if(myProgressBar1.Value % 100 == 0)
+                                      System.Threading.Thread.Sleep(2000);
                               }));
                         });
 
@@ -193,7 +191,7 @@ namespace EasyDuplicateFinder
                         cts.Dispose();
                         dataGridView1.Invoke(new Action(() =>
                         {
-                            this.dataGridView1.Sort(this.dataGridView1.Columns[5], ListSortDirection.Ascending);
+                            this.dataGridView1.Sort(this.dataGridView1.Columns[4], ListSortDirection.Ascending);
 
                             //Color cl1 = Color.Beige;
                             //Color cl2 = Color.LightGreen;
@@ -209,7 +207,6 @@ namespace EasyDuplicateFinder
                                     s2 = dataGridView1[5, i - 1].Value.ToString();
                                     cl = (s1 == s2) ? cl : (cl != Color.Beige) ? Color.Beige : Color.LightGreen;
                                     dataGridView1.Rows[i].DefaultCellStyle.BackColor = cl;
-
 
                                 }
                             }
@@ -251,6 +248,7 @@ namespace EasyDuplicateFinder
                                 string f = dataGridView1[2, i].Value.ToString();
                                 try { File.Delete(f); } catch { }
                                 label1.Invoke(new Action(() => label1.Text = "Delete File:" +f ));
+                                dataGridView1.Rows[i].DefaultCellStyle.BackColor = Color.Red;
                             }
                             }
                       
