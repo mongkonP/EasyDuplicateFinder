@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.ListViewItem;
-
+using EasyDuplicateFinder.clss;
 namespace EasyDuplicateFinder
 {
     public partial class frmMain : Form
@@ -136,85 +136,120 @@ namespace EasyDuplicateFinder
             List<string> dirs = new List<string>();
             foreach (ListViewItem item in listView1.Items)
             {
-                dirs.Add(item.Text);
+                if(Directory.Exists(item.Text))
+                dirs.AddRange(Directory.GetDirectories(item.Text,"*",SearchOption.AllDirectories).ToList());
             }
        
             if (dirs.Count > 0)
             {
-               
+                  
+                 // LimitedConcurrencyLevelTaskScheduler lcts = new LimitedConcurrencyLevelTaskScheduler();
+                // Create a TaskFactory and pass it our custom scheduler.
+                //  TaskFactory factory = new TaskFactory(lcts);
+                //  CancellationTokenSource cts = new CancellationTokenSource();
                 Task.Factory.StartNew(() =>
                 {
-                    List<Task> tasks = new List<Task>();
-                    LimitedConcurrencyLevelTaskScheduler lcts = new LimitedConcurrencyLevelTaskScheduler(10);
-                    // Create a TaskFactory and pass it our custom scheduler.
-                    TaskFactory factory = new TaskFactory(lcts);
-                    CancellationTokenSource cts = new CancellationTokenSource();
+
+                    Items items = new Items();
+                    myProgressBar1.Invoke(new Action(() => { myProgressBar1.Maximum = dirs.Count; myProgressBar1.Value = 0; }));
                     List<string> files = new List<string>();
-                    label1.Invoke(new Action(() => label1.Text = "Adding:Files" ));
-                    dirs.ForEach(dir =>
-                    {
-                        tasks.Add(Task.Factory.StartNew(() => { files.AddRange(Directory.GetFiles(dir,"*",SearchOption.AllDirectories));}));
-                    });
+                     label1.Invoke(new Action(() => label1.Text = "Adding:Files" ));
+                      dirs.ForEach(dir =>
+                      {
+                          List<Task> tasks = new List<Task>();
+                          Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly).ToList<string>()
+                          .ForEach(f =>
+                          {
+                              items.Add(f);
+                              label1.Invoke(new Action(() => label1.Text = "Adding:" + f));
 
-                    Task.WaitAll(tasks.ToArray());
+                          });
+                          Task.WaitAll(tasks.ToArray());
+                          myProgressBar1.Invoke(new Action(() => { myProgressBar1.Value++; }));
+                      });
+                    
+                     
+                    /* if (files.Count > 0)
+                     {
+                         Items items = new Items();
 
-                    cts.Dispose();
-                    if (files.Count > 0)
-                    {
+                       //  tasks = new List<Task>();
+                       //  lcts = new LimitedConcurrencyLevelTaskScheduler(10);
+                         // Create a TaskFactory and pass it our custom scheduler.
+                     //  factory = new TaskFactory(lcts);
+                       //   cts = new CancellationTokenSource();
+                         files.ForEach(f =>
+                         {
 
-                        myProgressBar1.Invoke(new Action(() => { myProgressBar1.Maximum = files.Count; myProgressBar1.Value = 0; }));
-                        tasks = new List<Task>();
-                        lcts = new LimitedConcurrencyLevelTaskScheduler(5);
-                        // Create a TaskFactory and pass it our custom scheduler.
-                      factory = new TaskFactory(lcts);
-                         cts = new CancellationTokenSource();
-                        files.ForEach(f =>
-                        {
-                           
-                              tasks.Add(Task.Factory.StartNew(() => {
+                             //  tasks.Add(Task.Factory.StartNew(() => {
 
-                                          System.Threading.Thread.Sleep(200);
-                                          dataGridView1.Invoke(new Action(() =>
-                                          {
-                                              dataGridView1.Rows.Add(false, Path.GetFileName(f), f, new FileInfo(f).Length, File.GetLastWriteTime(f), Ext.CalculateMD5(f));
-                                          }));
-                                          label1.Invoke(new Action(() => label1.Text = "Adding:" + f));
-                                 
-                                      myProgressBar1.Invoke(new Action(() => {  myProgressBar1.Value ++; }));
-                                 if(myProgressBar1.Value % 100 == 0)
-                                      System.Threading.Thread.Sleep(2000);
-                              }));
-                        });
+                                           System.Threading.Thread.Sleep(200);
+                                   /* dataGridView1.Invoke(new Action(() =>
+                                    {
+                                        dataGridView1.Rows.Add(false, Path.GetFileName(f), f, new FileInfo(f).Length, File.GetLastWriteTime(f), Ext.CalculateMD5(f));
+                                    }));*
+
+                                         items.Add(f);
+                                           label1.Invoke(new Action(() => label1.Text = "Adding:" + f));
+
+                                       myProgressBar1.Invoke(new Action(() => {  myProgressBar1.Value ++; }));
+                                 // if(myProgressBar1.Value % 10 == 0) System.Threading.Thread.Sleep(2000);
+                              // }));
+                         });*/
 
 
-                        Task.WaitAll(tasks.ToArray());
-                        cts.Dispose();
+                    //   Task.WaitAll(tasks.ToArray());
+                    // cts.Dispose();
+                    System.Threading.Thread.Sleep(2000);
                         dataGridView1.Invoke(new Action(() =>
                         {
-                            this.dataGridView1.Sort(this.dataGridView1.Columns[4], ListSortDirection.Ascending);
-
+                            dataGridView1.DataSource = items.DataItems;
+                            this.dataGridView1.Sort(this.dataGridView1.Columns[3], ListSortDirection.Ascending);
+                            dataGridView1.Columns[0].Width = 60;
+                            dataGridView1.Columns[1].Width = 180;
+                            dataGridView1.Columns[2].Width = 400;
+                            dataGridView1.Columns[3].Width = 120;
+                            dataGridView1.Columns[4].Width = 120;
+                            dataGridView1.Columns[5].Width = 300;
                             //Color cl1 = Color.Beige;
                             //Color cl2 = Color.LightGreen;
                             Color cl = Color.Beige;
 
                             string s1 = "";
                             string s2 = "";
+                            string s3 = "";
                             try
                             {
                                 for (int i = 1; i < dataGridView1.Rows.Count - 1; i++)
                                 {
-                                    s1 = dataGridView1[5, i].Value.ToString();
-                                    s2 = dataGridView1[5, i - 1].Value.ToString();
+                                    s1 = dataGridView1[5, i].Value.ToString().Trim();
+                                    s2 = dataGridView1[5, i - 1].Value.ToString().Trim();
+                                    try
+                                    {
+                                       
+                                        s3 = (i < dataGridView1.Rows.Count - 1 && dataGridView1[5, i + 1].Value != null) ? dataGridView1[5, i + 1].Value.ToString().Trim() : "";
+                                       
+                                    }
+                                    catch { }
+
                                     cl = (s1 == s2) ? cl : (cl != Color.Beige) ? Color.Beige : Color.LightGreen;
                                     dataGridView1.Rows[i].DefaultCellStyle.BackColor = cl;
-
+                                    if (s1 != s2)
+                                    {
+                                        if (string.IsNullOrEmpty(s3) && s1 != s3)
+                                        {
+                                            dataGridView1.Rows.RemoveAt(i);
+                                        }
+                                    }
                                 }
                             }
                             catch { }
-
                         }));
 
-                    }
+                        // dataGridView1.DataSource = items.DataItems ;
+
+                       
+                   // }
                     
                    label1.Invoke(new Action(() => label1.Text = "get Files Complete"));
                 });
@@ -273,12 +308,9 @@ namespace EasyDuplicateFinder
 
         private void listView1_DragEnter(object sender, DragEventArgs e)
         {
-            
-           
 
             // See if this is a copy and the data includes text.
-            if (e.Data.GetDataPresent(DataFormats.Text) &&
-                (e.AllowedEffect & DragDropEffects.Copy) != 0)
+            if ((e.Data.GetDataPresent(DataFormats.Text) || e.Data.GetDataPresent(DataFormats.FileDrop)) && (e.AllowedEffect & DragDropEffects.Copy) != 0)
             {
                 // Allow this.
                 e.Effect = DragDropEffects.Copy;
@@ -292,13 +324,44 @@ namespace EasyDuplicateFinder
 
         private void listView1_DragDrop(object sender, DragEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.Data.GetData(DataFormats.Text).ToString()) && !CheckItem(e.Data.GetData(DataFormats.Text).ToString()))
+            if (e.Data.GetDataPresent(DataFormats.Text))
             {
+                if (!string.IsNullOrEmpty(e.Data.GetData(DataFormats.Text).ToString()) && !CheckItem(e.Data.GetData(DataFormats.Text).ToString()))
+                {
 
-                listView1.Items.Add(e.Data.GetData(DataFormats.Text).ToString());
+                    listView1.Items.Add(e.Data.GetData(DataFormats.Text).ToString());
+                    SetDirListview();
+                }
+            }
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                if (!string.IsNullOrEmpty(e.Data.GetData(DataFormats.FileDrop).ToString()) && !CheckItem(e.Data.GetData(DataFormats.FileDrop).ToString()))
+                {
+
+                    //  listView1.Items.Add(e.Data.GetData(DataFormats.FileDrop).ToString());
+                    // SetDirListview();
+                    //drag from explore
+                    // string[] files = e.Data.GetData(DataFormats.FileDrop, false) as string[];
+
+                    // listView1.Items.Add(Path.GetFileName(files[0]));
+
+
+                    //https://www.telerik.com/forums/drag-and-drop-files-from-the-desktop-or-windows-explorer-to-radlistview
+                    string[] handles = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+                    foreach (string path in handles)
+                    {
+                        listView1.Items.Add(path);
+
+                    }
+                    }
                 SetDirListview();
             }
-          //  e.Effect = DragDropEffects.None;
+            //  e.Effect = DragDropEffects.None;
+
+            
+
+         
         }
 
         private void treeViewDirectory1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -309,6 +372,50 @@ namespace EasyDuplicateFinder
         private void treeViewDirectory1_MouseClick(object sender, MouseEventArgs e)
         {
             
+        }
+
+        private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+
+                dataGridView1.Invoke(new Action(() =>
+                {
+                    //  this.dataGridView1.DataSource = items.DataItems
+
+                 //   this.dataGridView1.Sort(this.dataGridView1.Columns[4], ListSortDirection.Ascending);
+                    dataGridView1.Columns[0].Width = 60;
+                    dataGridView1.Columns[1].Width = 180;
+                    dataGridView1.Columns[2].Width = 400;
+                    dataGridView1.Columns[3].Width = 120;
+                    dataGridView1.Columns[4].Width = 120;
+                    dataGridView1.Columns[5].Width = 300;
+                    //Color cl1 = Color.Beige;
+                    //Color cl2 = Color.LightGreen;
+                    Color cl = Color.Beige;
+
+                    string s1 = "";
+                    string s2 = "";
+                    try
+                    {
+                        for (int i = 1; i < dataGridView1.Rows.Count - 1; i++)
+                        {
+                            s1 = dataGridView1[5, i].Value.ToString();
+                            s2 = dataGridView1[5, i - 1].Value.ToString();
+                            cl = (s1 == s2) ? cl : (cl != Color.Beige) ? Color.Beige : Color.LightGreen;
+                            dataGridView1.Rows[i].DefaultCellStyle.BackColor = cl;
+
+                        }
+                    }
+                    catch { }
+
+                }));
+            });
+        }
+
+        private void dataGridView1_Sorted(object sender, EventArgs e)
+        {
+
         }
     }
 }

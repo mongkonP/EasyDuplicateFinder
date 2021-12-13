@@ -41,12 +41,6 @@ namespace EasyDuplicateFinder
             this.treeViewDirectory1 = new EasyDuplicateFinder.TreeViewDirectory();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Column6 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel3 = new System.Windows.Forms.Panel();
             this.myProgressBar1 = new EasyDuplicateFinder.clss.MyProgressBar();
             this.label1 = new System.Windows.Forms.Label();
@@ -188,55 +182,14 @@ namespace EasyDuplicateFinder
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column6,
-            this.Column1,
-            this.Column2,
-            this.Column3,
-            this.Column4,
-            this.Column5});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 25;
             this.dataGridView1.Size = new System.Drawing.Size(1428, 427);
             this.dataGridView1.TabIndex = 2;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "Selected";
-            this.Column6.Name = "Column6";
-            this.Column6.Width = 60;
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "File";
-            this.Column1.Name = "Column1";
-            this.Column1.Width = 180;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Path";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 400;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "Size";
-            this.Column3.Name = "Column3";
-            this.Column3.Width = 150;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "Date Modified";
-            this.Column4.Name = "Column4";
-            this.Column4.Width = 120;
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "MD5";
-            this.Column5.Name = "Column5";
-            this.Column5.Width = 300;
+            this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
+            this.dataGridView1.Sorted += new System.EventHandler(this.dataGridView1_Sorted);
             // 
             // panel3
             // 
@@ -330,19 +283,13 @@ namespace EasyDuplicateFinder
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader clPath;
-        private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
 
         private TreeViewDirectory treeViewDirectory1;
         private clss.MyProgressBar myProgressBar1;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
