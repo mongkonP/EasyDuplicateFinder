@@ -30,7 +30,7 @@ namespace EasyDuplicateFinder.clss
             _DataItems.Columns.Add(new DataColumn("FullPath", typeof(string)));
             _DataItems.Columns.Add(new DataColumn("FileSize", typeof(string)));
             _DataItems.Columns.Add(new DataColumn("Date Modified", typeof(string)));
-            _DataItems.Columns.Add(new DataColumn("FileMD5", typeof(string)));
+           // _DataItems.Columns.Add(new DataColumn("FileMD5", typeof(string)));
         }
         public void Add(string path)
         {
@@ -42,20 +42,29 @@ namespace EasyDuplicateFinder.clss
             dr["FullPath"] = path;
             dr["FileSize"] =new  FileInfo(path).Length;
             dr["Date Modified"] = File.GetLastWriteTime(path);
-            dr["FileMD5"] = "";//Ext.CalculateMD5(path);
+           // dr["FileMD5"] = "";//Ext.CalculateMD5(path);
             System.Threading.Thread.Sleep(100);
             _DataItems.Rows.Add(dr);
         }
         public DataTable DataItems
         {
             get {
-                 DataTable dst = _DataItems.Clone();
+                DataTable dst;// _DataItems.Clone();
                 /*foreach (DataRow thisRow in dst.Select("select *  having count(FileMD5) >='2'","FileMD5 ASC"))
                 {
                     dst.ImportRow(thisRow);
                 }
                 return dst; */
-                System.Windows.Forms.MessageBox.Show(_DataItems.Rows.Count.ToString());
+                //selecting all the records of 2014
+                var allDuplicates = _DataItems.AsEnumerable()
+    .GroupBy(dr => dr.Field<string>("FileSize"))
+    .Where(g => g.Count() > 1)
+    .Select(g => g)
+    .ToList();
+               /* if (allDuplicates.Count() > 0)
+                {
+                    dst = allDuplicates.(); //dataTbl is the DataTable
+                }*/
                 return _DataItems;
             
             }

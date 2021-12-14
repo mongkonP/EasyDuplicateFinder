@@ -29,7 +29,7 @@ namespace EasyDuplicateFinder.clss
             }
             using (Font f = new Font(FontFamily.GenericMonospace, 18))
             {
-                string _v = $"Folder {this.Value} in {this.Maximum}  { (Convert.ToDouble(this.Value) / Convert.ToDouble(this.Maximum )* 100d).ToString("N3")}  %";
+                string _v = $"File {this.Value} in {this.Maximum}  { (Convert.ToDouble(this.Value) / Convert.ToDouble(this.Maximum )* 100d).ToString("N3")}  %";
                 SizeF size = g.MeasureString(_v, f);
                 Point location = new Point((int)((rect.Width / 2) - (size.Width / 2)), (int)((rect.Height / 2) - (size.Height / 2) + 2));
                 g.DrawString(_v, f, Brushes.Black, location);

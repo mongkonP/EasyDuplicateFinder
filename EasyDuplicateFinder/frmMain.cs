@@ -131,86 +131,96 @@ namespace EasyDuplicateFinder
                 }
             }
         }
+
         private void button4_Click(object sender, EventArgs e)
         {
             List<string> dirs = new List<string>();
+            List<string> Allfiles = new List<string>();
             foreach (ListViewItem item in listView1.Items)
             {
                 if(Directory.Exists(item.Text))
                 dirs.AddRange(Directory.GetDirectories(item.Text,"*",SearchOption.AllDirectories).ToList());
+                Allfiles.AddRange(Directory.GetFiles(item.Text, "*", SearchOption.AllDirectories).ToList());
             }
        
             if (dirs.Count > 0)
             {
                   
-                 // LimitedConcurrencyLevelTaskScheduler lcts = new LimitedConcurrencyLevelTaskScheduler();
-                // Create a TaskFactory and pass it our custom scheduler.
-                //  TaskFactory factory = new TaskFactory(lcts);
-                //  CancellationTokenSource cts = new CancellationTokenSource();
+                
                 Task.Factory.StartNew(() =>
                 {
 
-                    Items items = new Items();
-                    myProgressBar1.Invoke(new Action(() => { myProgressBar1.Maximum = dirs.Count; myProgressBar1.Value = 0; }));
-                    List<string> files = new List<string>();
+                    var get_info =
+                    from string f in Allfiles
+                    select new
+                    {
+                        selected = false,
+                        FileName = Path.GetFileName( f),
+                        FullPath = f,
+                        FileSize = new FileInfo(f).Length.ToString(),
+                        DateModified = File.GetLastWriteTime(f)
+
+                    };
+
+ 
+                    var group_infos =
+                        from info in get_info
+                        group info by info.FileSize into g
+                        where g.Count() > 1
+                    select g;
+
+
+                
+                    myProgressBar1.Invoke(new Action(() => { myProgressBar1.Maximum = get_info.Count(); myProgressBar1.Value = 0; }));
+                   
+                  
                      label1.Invoke(new Action(() => label1.Text = "Adding:Files" ));
-                      dirs.ForEach(dir =>
-                      {
-                          List<Task> tasks = new List<Task>();
-                          Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly).ToList<string>()
-                          .ForEach(f =>
-                          {
-                              items.Add(f);
-                              label1.Invoke(new Action(() => label1.Text = "Adding:" + f));
+                    DataTable _DataItems = new DataTable();
+                    _DataItems = new DataTable();
+                    _DataItems.Columns.Add(new DataColumn("selected", typeof(bool)));
+                    _DataItems.Columns.Add(new DataColumn("FileName", typeof(string)));
+                    _DataItems.Columns.Add(new DataColumn("FullPath", typeof(string)));
+                    _DataItems.Columns.Add(new DataColumn("FileSize", typeof(string)));
+                    _DataItems.Columns.Add(new DataColumn("Date Modified", typeof(string)));
 
-                          });
-                          Task.WaitAll(tasks.ToArray());
-                          myProgressBar1.Invoke(new Action(() => { myProgressBar1.Value++; }));
-                      });
-                    
-                     
-                    /* if (files.Count > 0)
-                     {
-                         Items items = new Items();
-
-                       //  tasks = new List<Task>();
-                       //  lcts = new LimitedConcurrencyLevelTaskScheduler(10);
-                         // Create a TaskFactory and pass it our custom scheduler.
-                     //  factory = new TaskFactory(lcts);
-                       //   cts = new CancellationTokenSource();
-                         files.ForEach(f =>
+                   
+                    CancellationTokenSource cts = new CancellationTokenSource();
+              foreach (var g in group_infos)
                          {
 
-                             //  tasks.Add(Task.Factory.StartNew(() => {
+                            foreach (var info in g)
+                            {
+                                DataRow dr = _DataItems.NewRow();
+                                dr["selected"] = false;
+                                dr["FileName"] = info.FileName;
+                                dr["FullPath"] = info.FullPath;
+                                dr["FileSize"] = info.FileSize;
+                                dr["Date Modified"] = info.DateModified;
+                                System.Threading.Thread.Sleep(100);
+                                _DataItems.Rows.Add(dr);
+                                label1.Invoke(new Action(() => label1.Text = "Adding:" + info.FullPath));
+                                myProgressBar1.Invoke(new Action(() => {
+                                     if(myProgressBar1.Value < myProgressBar1.Maximum)
+                                     myProgressBar1.Value ++;
+                                 }));
+                            }
+                        }
+                    myProgressBar1.Invoke(new Action(() => {
+                        myProgressBar1.Value = myProgressBar1.Maximum;
+                    }));
+                    label1.Invoke(new Action(() => label1.Text = "Adding: complete" ));
 
-                                           System.Threading.Thread.Sleep(200);
-                                   /* dataGridView1.Invoke(new Action(() =>
-                                    {
-                                        dataGridView1.Rows.Add(false, Path.GetFileName(f), f, new FileInfo(f).Length, File.GetLastWriteTime(f), Ext.CalculateMD5(f));
-                                    }));*
-
-                                         items.Add(f);
-                                           label1.Invoke(new Action(() => label1.Text = "Adding:" + f));
-
-                                       myProgressBar1.Invoke(new Action(() => {  myProgressBar1.Value ++; }));
-                                 // if(myProgressBar1.Value % 10 == 0) System.Threading.Thread.Sleep(2000);
-                              // }));
-                         });*/
-
-
-                    //   Task.WaitAll(tasks.ToArray());
-                    // cts.Dispose();
                     System.Threading.Thread.Sleep(2000);
                         dataGridView1.Invoke(new Action(() =>
                         {
-                            dataGridView1.DataSource = items.DataItems;
+                            dataGridView1.DataSource = _DataItems;
                             this.dataGridView1.Sort(this.dataGridView1.Columns[3], ListSortDirection.Ascending);
                             dataGridView1.Columns[0].Width = 60;
                             dataGridView1.Columns[1].Width = 180;
                             dataGridView1.Columns[2].Width = 400;
                             dataGridView1.Columns[3].Width = 120;
                             dataGridView1.Columns[4].Width = 120;
-                            dataGridView1.Columns[5].Width = 300;
+                          //  dataGridView1.Columns[5].Width = 300;
                             //Color cl1 = Color.Beige;
                             //Color cl2 = Color.LightGreen;
                             Color cl = Color.Beige;
@@ -222,12 +232,12 @@ namespace EasyDuplicateFinder
                             {
                                 for (int i = 1; i < dataGridView1.Rows.Count - 1; i++)
                                 {
-                                    s1 = dataGridView1[5, i].Value.ToString().Trim();
-                                    s2 = dataGridView1[5, i - 1].Value.ToString().Trim();
+                                    s1 = dataGridView1[3, i].Value.ToString().Trim();
+                                    s2 = dataGridView1[3, i - 1].Value.ToString().Trim();
                                     try
                                     {
                                        
-                                        s3 = (i < dataGridView1.Rows.Count - 1 && dataGridView1[5, i + 1].Value != null) ? dataGridView1[5, i + 1].Value.ToString().Trim() : "";
+                                        s3 = (i < dataGridView1.Rows.Count - 1 && dataGridView1[3, i + 1].Value != null) ? dataGridView1[3, i + 1].Value.ToString().Trim() : "";
                                        
                                     }
                                     catch { }
@@ -253,9 +263,6 @@ namespace EasyDuplicateFinder
                     
                    label1.Invoke(new Action(() => label1.Text = "get Files Complete"));
                 });
-               
-
-
 
             }
                 
@@ -337,15 +344,6 @@ namespace EasyDuplicateFinder
             {
                 if (!string.IsNullOrEmpty(e.Data.GetData(DataFormats.FileDrop).ToString()) && !CheckItem(e.Data.GetData(DataFormats.FileDrop).ToString()))
                 {
-
-                    //  listView1.Items.Add(e.Data.GetData(DataFormats.FileDrop).ToString());
-                    // SetDirListview();
-                    //drag from explore
-                    // string[] files = e.Data.GetData(DataFormats.FileDrop, false) as string[];
-
-                    // listView1.Items.Add(Path.GetFileName(files[0]));
-
-
                     //https://www.telerik.com/forums/drag-and-drop-files-from-the-desktop-or-windows-explorer-to-radlistview
                     string[] handles = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
@@ -389,7 +387,7 @@ namespace EasyDuplicateFinder
                     dataGridView1.Columns[2].Width = 400;
                     dataGridView1.Columns[3].Width = 120;
                     dataGridView1.Columns[4].Width = 120;
-                    dataGridView1.Columns[5].Width = 300;
+                   // dataGridView1.Columns[5].Width = 300;
                     //Color cl1 = Color.Beige;
                     //Color cl2 = Color.LightGreen;
                     Color cl = Color.Beige;
@@ -400,8 +398,8 @@ namespace EasyDuplicateFinder
                     {
                         for (int i = 1; i < dataGridView1.Rows.Count - 1; i++)
                         {
-                            s1 = dataGridView1[5, i].Value.ToString();
-                            s2 = dataGridView1[5, i - 1].Value.ToString();
+                            s1 = dataGridView1[3, i].Value.ToString();
+                            s2 = dataGridView1[3, i - 1].Value.ToString();
                             cl = (s1 == s2) ? cl : (cl != Color.Beige) ? Color.Beige : Color.LightGreen;
                             dataGridView1.Rows[i].DefaultCellStyle.BackColor = cl;
 
