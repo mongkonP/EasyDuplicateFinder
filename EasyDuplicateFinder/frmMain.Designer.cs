@@ -42,10 +42,12 @@ namespace EasyDuplicateFinder
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.lblTime = new System.Windows.Forms.Label();
             this.myProgressBar1 = new EasyDuplicateFinder.clss.MyProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -193,6 +195,7 @@ namespace EasyDuplicateFinder
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.lblTime);
             this.panel3.Controls.Add(this.myProgressBar1);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.button5);
@@ -202,6 +205,18 @@ namespace EasyDuplicateFinder
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1428, 120);
             this.panel3.TabIndex = 1;
+            // 
+            // lblTime
+            // 
+            this.lblTime.AutoSize = true;
+            this.lblTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.lblTime.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.lblTime.Location = new System.Drawing.Point(248, 40);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(112, 32);
+            this.lblTime.TabIndex = 5;
+            this.lblTime.Text = "00:00:00";
             // 
             // myProgressBar1
             // 
@@ -215,7 +230,7 @@ namespace EasyDuplicateFinder
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(272, 7);
+            this.label1.Location = new System.Drawing.Point(248, 3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 21);
             this.label1.TabIndex = 3;
@@ -250,6 +265,11 @@ namespace EasyDuplicateFinder
             this.button4.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // frmMain
             // 
@@ -286,10 +306,12 @@ namespace EasyDuplicateFinder
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Label label1;
 
         private TreeViewDirectory treeViewDirectory1;
         private clss.MyProgressBar myProgressBar1;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Label lblTime;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Timer timer1;
     }
 }

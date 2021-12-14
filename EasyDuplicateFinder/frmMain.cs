@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.ListViewItem;
 using EasyDuplicateFinder.clss;
+using System.Diagnostics;
+
 namespace EasyDuplicateFinder
 {
     public partial class frmMain : Form
@@ -134,6 +136,9 @@ namespace EasyDuplicateFinder
 
         private void button4_Click(object sender, EventArgs e)
         {
+            lblTime.Text = "00:00:00"; t = 0;
+            timer1.Enabled = true;
+            timer1.Start();
             List<string> dirs = new List<string>();
             List<string> Allfiles = new List<string>();
             foreach (ListViewItem item in listView1.Items)
@@ -196,7 +201,7 @@ namespace EasyDuplicateFinder
                                 dr["FullPath"] = info.FullPath;
                                 dr["FileSize"] = info.FileSize;
                                 dr["Date Modified"] = info.DateModified;
-                                System.Threading.Thread.Sleep(100);
+                               
                                 _DataItems.Rows.Add(dr);
                                 label1.Invoke(new Action(() => label1.Text = "Adding:" + info.FullPath));
                                 myProgressBar1.Invoke(new Action(() => {
@@ -210,7 +215,7 @@ namespace EasyDuplicateFinder
                     }));
                     label1.Invoke(new Action(() => label1.Text = "Adding: complete" ));
 
-                    System.Threading.Thread.Sleep(2000);
+                   
                         dataGridView1.Invoke(new Action(() =>
                         {
                             dataGridView1.DataSource = _DataItems;
@@ -230,6 +235,7 @@ namespace EasyDuplicateFinder
                             string s3 = "";
                             try
                             {
+                                dataGridView1.Rows[0].DefaultCellStyle.BackColor = cl;
                                 for (int i = 1; i < dataGridView1.Rows.Count - 1; i++)
                                 {
                                     s1 = dataGridView1[3, i].Value.ToString().Trim();
@@ -244,13 +250,7 @@ namespace EasyDuplicateFinder
 
                                     cl = (s1 == s2) ? cl : (cl != Color.Beige) ? Color.Beige : Color.LightGreen;
                                     dataGridView1.Rows[i].DefaultCellStyle.BackColor = cl;
-                                    if (s1 != s2)
-                                    {
-                                        if (string.IsNullOrEmpty(s3) && s1 != s3)
-                                        {
-                                            dataGridView1.Rows.RemoveAt(i);
-                                        }
-                                    }
+                                    
                                 }
                             }
                             catch { }
@@ -264,12 +264,20 @@ namespace EasyDuplicateFinder
                    label1.Invoke(new Action(() => label1.Text = "get Files Complete"));
                 });
 
+                timer1.Stop();
+                timer1.Enabled = false;
             }
                 
 
 
         }
-
+        int t = 0;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            t++;
+            //  lblTime.Invoke(new Action(() => lblTime.Text = TimeSpan.FromSeconds(t).ToString()));
+            this.Invoke(new Action(() => this.Text = TimeSpan.FromSeconds(t).ToString()));
+        }
         private void button5_Click(object sender, EventArgs e)
         {
             if (dataGridView1.Rows.Count > 0)
@@ -396,6 +404,7 @@ namespace EasyDuplicateFinder
                     string s2 = "";
                     try
                     {
+                        dataGridView1.Rows[0].DefaultCellStyle.BackColor = cl;
                         for (int i = 1; i < dataGridView1.Rows.Count - 1; i++)
                         {
                             s1 = dataGridView1[3, i].Value.ToString();
@@ -415,5 +424,6 @@ namespace EasyDuplicateFinder
         {
 
         }
+       
     }
 }
