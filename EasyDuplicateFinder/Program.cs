@@ -17,7 +17,7 @@ namespace EasyDuplicateFinder
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new test.Form2());
+            Application.Run(new frmMain ());
         }
     }
 }

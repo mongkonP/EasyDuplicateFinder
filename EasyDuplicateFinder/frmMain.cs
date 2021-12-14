@@ -21,7 +21,7 @@ namespace EasyDuplicateFinder
         {
             InitializeComponent();
         }
-
+        int t = 0;
         private void frmMain_Load(object sender, EventArgs e)
         {
           treeViewDirectory1.InitializeTreeViewDirectory();
@@ -32,6 +32,9 @@ namespace EasyDuplicateFinder
 
 
             }
+
+           
+
         }
 
         
@@ -136,7 +139,8 @@ namespace EasyDuplicateFinder
 
         private void button4_Click(object sender, EventArgs e)
         {
-            lblTime.Text = "00:00:00"; t = 0;
+            lblTime.Text = "00:00:00"; 
+            t = 0;
             timer1.Enabled = true;
             timer1.Start();
             List<string> dirs = new List<string>();
@@ -262,21 +266,22 @@ namespace EasyDuplicateFinder
                    // }
                     
                    label1.Invoke(new Action(() => label1.Text = "get Files Complete"));
+                    timer1.Stop();
+                    timer1.Enabled = false;
                 });
 
-                timer1.Stop();
-                timer1.Enabled = false;
+              
             }
                 
 
 
         }
-        int t = 0;
+      
         private void timer1_Tick(object sender, EventArgs e)
         {
             t++;
-            //  lblTime.Invoke(new Action(() => lblTime.Text = TimeSpan.FromSeconds(t).ToString()));
-            this.Invoke(new Action(() => this.Text = TimeSpan.FromSeconds(t).ToString()));
+              lblTime.Invoke(new Action(() => lblTime.Text = TimeSpan.FromSeconds(t).ToString()));
+           // this.Invoke(new Action(() => this.Text = TimeSpan.FromSeconds(t).ToString()));
         }
         private void button5_Click(object sender, EventArgs e)
         {

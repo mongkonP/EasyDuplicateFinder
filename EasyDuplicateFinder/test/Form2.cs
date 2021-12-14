@@ -20,7 +20,7 @@ namespace EasyDuplicateFinder.test
             button2.Click += new EventHandler(button2_Click);
             timer1.Tick += new EventHandler(timer1_Tick);
         }
-        int t = 0;
+        long t = 0;
         private void button1_Click(object sender, EventArgs e)
         {
             t = 0;
@@ -37,8 +37,14 @@ namespace EasyDuplicateFinder.test
         private void timer1_Tick(object sender, EventArgs e)
         {
             t++;
-            this.Invoke(new Action(() => this.Text = TimeSpan.FromMilliseconds(t).ToString()));
+            this.Invoke(new Action(() => this.Text = TimeSpan.FromSeconds(t).ToString()));
         }
 
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            t = 0;
+            timer1.Enabled = true;
+            timer1.Start();
+        }
     }
 }
